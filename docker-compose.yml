@@ -1,0 +1,48 @@
+version: '3.7'
+
+services:
+    mysql:
+        image: mysql:5.7
+        container_name: mysql_sever
+        volumes:
+            - ./.docker/mysql/dbdata:/var/lib/mysq
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: keycloak
+            MYSQL_USER: admin
+            MYSQL_PASSWORD: root
+        ports:
+            - 3307:3306
+
+    # https://github.com/keycloak/keycloak-containers
+    keycloak:
+        image: quay.io/keycloak/keycloak:legacy
+        container_name: app_keycloak
+        environment:
+            DB_VENDOR: MYSQL
+            DB_ADDR: mysql
+            DB_DATABASE: keycloak
+            DB_USER: admin
+            DB_PASSWORD: root
+            KEYCLOAK_USER: admin
+            KEYCLOAK_PASSWORD: admin
+            # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the MySQL JDBC driver documentation in order to use it.
+            #JDBC_PARAMS: "connectTimeout=30000"
+        ports:
+            - 8085:8080
+        depends_on:
+            - mysql
+
+    portainer:
+        image: portainer/portainer:latest
+        container_name: portainer
+        restart: always
+        security_opt:
+            - no-new-privileges:true
+        volumes:
+            - /etc/localtime:/etc/localtime:ro
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+            - ./.docker/portainer/data:/data
+        command: -H unix:///var/run/docker.sock
+        ports:
+            - 8086:9000
