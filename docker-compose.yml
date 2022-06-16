@@ -4,15 +4,18 @@ services:
     mysql:
         image: mysql:5.7
         container_name: mysql_sever
+        restart: unless-stopped
         volumes:
-            - ./.docker/mysql/dbdata:/var/lib/mysq
+            - ./.docker/mysql/dbdata:/var/lib/mysql
         environment:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: keycloak
             MYSQL_USER: admin
-            MYSQL_PASSWORD: root
+            MYSQL_PASSWORD: admin
         ports:
-            - 3307:3306
+            - 3306:3306
+        networks:
+            - rede_web_docker
 
     # https://github.com/keycloak/keycloak-containers
     keycloak:
@@ -23,7 +26,7 @@ services:
             DB_ADDR: mysql
             DB_DATABASE: keycloak
             DB_USER: admin
-            DB_PASSWORD: root
+            DB_PASSWORD: admin
             KEYCLOAK_USER: admin
             KEYCLOAK_PASSWORD: admin
             # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the MySQL JDBC driver documentation in order to use it.
@@ -32,6 +35,8 @@ services:
             - 8085:8080
         depends_on:
             - mysql
+        networks:
+            - rede_web_docker
 
     portainer:
         image: portainer/portainer:latest
@@ -46,3 +51,10 @@ services:
         command: -H unix:///var/run/docker.sock
         ports:
             - 8086:9000
+        networks:
+            - rede_web_docker
+
+networks:
+    rede_web_docker:
+        name: rede_web_docker
+        driver: bridge
