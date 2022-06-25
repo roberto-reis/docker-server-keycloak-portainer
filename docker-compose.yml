@@ -3,34 +3,31 @@ version: '3.7'
 services:
     mysql:
         image: mysql:5.7
-        container_name: mysql_sever
-        restart: unless-stopped
+        container_name: mysql_server
+        restart: always
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=keycloak
         volumes:
             - ./.docker/mysql/dbdata:/var/lib/mysql
-        environment:
-            MYSQL_ROOT_PASSWORD: root
-            MYSQL_DATABASE: keycloak
-            MYSQL_USER: admin
-            MYSQL_PASSWORD: admin
         ports:
             - 3306:3306
         networks:
             - rede_web_docker
 
-    # https://github.com/keycloak/keycloak-containers
     keycloak:
-        image: quay.io/keycloak/keycloak:legacy
+        image: jboss/keycloak:16.1.0
         container_name: app_keycloak
+        restart: always
         environment:
-            DB_VENDOR: MYSQL
-            DB_ADDR: mysql
-            DB_DATABASE: keycloak
-            DB_USER: admin
-            DB_PASSWORD: admin
-            KEYCLOAK_USER: admin
-            KEYCLOAK_PASSWORD: admin
-            # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the MySQL JDBC driver documentation in order to use it.
-            #JDBC_PARAMS: "connectTimeout=30000"
+            - DB_VENDOR=MYSQL
+            - DB_ADDR=mysql
+            - DB_PORT=3306
+            - DB_DATABASE=keycloak
+            - DB_USER=root
+            - DB_PASSWORD=root
+            - KEYCLOAK_USER=admin
+            - KEYCLOAK_PASSWORD=admin
         ports:
             - 8085:8080
         depends_on:
