@@ -36,7 +36,7 @@ services:
             - rede_web_docker
 
     portainer:
-        image: portainer/portainer:latest
+        image: portainer/portainer-ce:latest
         container_name: portainer
         restart: always
         security_opt:
