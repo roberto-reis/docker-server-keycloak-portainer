@@ -3,8 +3,8 @@ version: '3.7'
 services:
     mysql:
         image: mysql:5.7
-        container_name: mysql_server
-        restart: always
+        container_name: mysql-server
+        restart: unless-stopped
         environment:
             - MYSQL_ROOT_PASSWORD=root
             - MYSQL_DATABASE=keycloak
@@ -13,12 +13,12 @@ services:
         ports:
             - 3306:3306
         networks:
-            - rede_web_docker
+            - rede-web-docker
 
     keycloak:
         image: jboss/keycloak:16.1.0
-        container_name: app_keycloak
-        restart: always
+        container_name: app-keycloak
+        restart: unless-stopped
         environment:
             - DB_VENDOR=MYSQL
             - DB_ADDR=mysql
@@ -33,12 +33,12 @@ services:
         depends_on:
             - mysql
         networks:
-            - rede_web_docker
+            - rede-web-docker
 
     portainer:
         image: portainer/portainer-ce:latest
         container_name: portainer
-        restart: always
+        restart: unless-stopped
         security_opt:
             - no-new-privileges:true
         volumes:
@@ -49,9 +49,9 @@ services:
         ports:
             - 8086:9000
         networks:
-            - rede_web_docker
+            - rede-web-docker
 
 networks:
-    rede_web_docker:
-        name: rede_web_docker
+    rede-web-docker:
+        name: rede-web-docker
         driver: bridge
