@@ -1,9 +1,9 @@
 version: '3.7'
 
 services:
-    mysql:
+    database:
         image: mysql:5.7
-        container_name: mysql-server
+        container_name: database
         restart: unless-stopped
         environment:
             - MYSQL_ROOT_PASSWORD=root
@@ -21,7 +21,7 @@ services:
         restart: unless-stopped
         environment:
             - DB_VENDOR=MYSQL
-            - DB_ADDR=mysql
+            - DB_ADDR=database
             - DB_PORT=3306
             - DB_DATABASE=keycloak
             - DB_USER=root
@@ -31,7 +31,7 @@ services:
         ports:
             - 8085:8080
         depends_on:
-            - mysql
+            - database
         networks:
             - rede-web-docker
 
