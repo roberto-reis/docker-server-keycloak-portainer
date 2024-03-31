@@ -1,11 +1,14 @@
 version: '3.7'
 
+# LimitNOFILE=infinity
+# links: https://github.com/docker-library/mysql/issues/873 | https://forum.manjaro.org/t/mysql5-7-on-docker/142641/8
+
 services:
     database:
         image: mysql:5.7
         container_name: database
         restart: unless-stopped
-        ulimits: # Fix memory leak issue on some systems when LimitNOFILE=infinity (containerd) | https://github.com/docker-library/mysql/issues/873
+        ulimits: # Fix memory leak issue on some systems when LimitNOFILE=infinity (containerd)
             nofile:
                 soft: 1048576
                 hard: 1048576
